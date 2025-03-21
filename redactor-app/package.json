@@ -1,0 +1,12 @@
+{
+  "name": "html-redactor",
+  "version": "1.0.0",
+  "description": "An application to identify and redact sensitive content in HTML files",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
