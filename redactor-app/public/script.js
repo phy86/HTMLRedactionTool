@@ -150,12 +150,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const folderPath = folderPathInput.value.trim();
         console.log('Raw folder path value:', folderPathInput.value);
         console.log('Trimmed folder path:', folderPath);
-        console.log('Input element:', folderPathInput);
-        console.log('Input element attributes:', {
-            id: folderPathInput.id,
-            value: folderPathInput.value,
-            type: folderPathInput.type
-        });
 
         if (!folderPath) {
             console.log('Folder path is empty');
@@ -163,8 +157,10 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
+        // Get custom patterns and text
         const patterns = patternsInput.value.trim();
-        console.log('Submitting preview request:', { folderPath, patterns });
+        const customText = document.getElementById('customText').value.trim();
+        console.log('Submitting preview request:', { folderPath, patterns, customText });
 
         try {
             showLoading();
@@ -176,7 +172,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 body: JSON.stringify({
                     folder: folderPath,
-                    patterns: patterns || null
+                    patterns: patterns || null,
+                    customText: customText || null
                 }),
             });
 
@@ -222,6 +219,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const folderPath = folderPathInput.value.trim();
         const patterns = patternsInput.value.trim();
+        const customText = document.getElementById('customText').value.trim();
 
         try {
             showLoading();
@@ -232,7 +230,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 body: JSON.stringify({
                     folder: folderPath,
-                    patterns: patterns || null
+                    patterns: patterns || null,
+                    customText: customText || null
                 }),
             });
 
