@@ -17,27 +17,48 @@ const DEFAULT_PATTERNS = [
  * @param {string|string[]|null} customPatterns - Optional custom patterns
  * @returns {RegExp[]} Array of compiled regex patterns
  */
-function compilePatterns(customPatterns = null) {
-    if (!customPatterns) {
-        return DEFAULT_PATTERNS;
+function compilePatterns(customPatterns = null, customText = null) {
+    let patterns = [];
+
+    // Add default patterns if no custom patterns provided
+    if (!customPatterns && !customText) {
+        patterns = DEFAULT_PATTERNS;
     }
 
-    const patterns = Array.isArray(customPatterns) 
-        ? customPatterns 
-        : customPatterns.split(',').map(p => p.trim());
+    // Add custom regex patterns
+    if (customPatterns) {
+        const regexPatterns = Array.isArray(customPatterns) 
+            ? customPatterns 
+            : customPatterns.split(',').map(p => p.trim());
 
-    return patterns.map(pattern => {
-        try {
-            // If pattern is already a RegExp, return it
-            if (pattern instanceof RegExp) return pattern;
-            // Convert string pattern to RegExp, maintaining global flag
-            const patternStr = pattern.replace(/^\/|\/[gimuy]*$/g, '');
-            return new RegExp(patternStr, 'g');
-        } catch (error) {
-            console.error(`Invalid regex pattern: ${pattern}`);
-            return null;
-        }
-    }).filter(Boolean);
+        patterns.push(...regexPatterns.map(pattern => {
+            try {
+                // If pattern is already a RegExp, return it
+                if (pattern instanceof RegExp) return pattern;
+                // Convert string pattern to RegExp, maintaining global flag
+                const patternStr = pattern.replace(/^\/|\/[gimuy]*$/g, '');
+                return new RegExp(patternStr, 'g');
+            } catch (error) {
+                console.error(`Invalid regex pattern: ${pattern}`);
+                return null;
+            }
+        }).filter(Boolean));
+    }
+
+    // Add custom text patterns
+    if (customText) {
+        const textPatterns = Array.isArray(customText)
+            ? customText
+            : customText.split('\n').map(t => t.trim()).filter(t => t);
+
+        patterns.push(...textPatterns.map(text => {
+            // Escape special regex characters in the text
+            const escapedText = text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            return new RegExp(escapedText, 'g');
+        }));
+    }
+
+    return patterns;
 }
 
 /**
