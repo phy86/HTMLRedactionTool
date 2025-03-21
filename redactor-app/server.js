@@ -17,7 +17,7 @@ app.get('/', (req, res) => {
 // Preview endpoint
 app.post('/preview', async (req, res) => {
     try {
-        const { folder, patterns } = req.body;
+        const { folder, patterns, customText } = req.body;
         
         if (!folder) {
             return res.status(400).json({
@@ -30,8 +30,9 @@ app.post('/preview', async (req, res) => {
         console.log('Processing folder:', folderPath);
         console.log('Current working directory:', process.cwd());
         console.log('Directory exists:', require('fs').existsSync(folderPath));
+        console.log('Custom text to redact:', customText);
         
-        const result = await processHTMLFilesForPreview(folderPath, patterns);
+        const result = await processHTMLFilesForPreview(folderPath, patterns, customText);
         console.log('Preview result:', result);
 
         if (!result.success) {
@@ -55,7 +56,7 @@ app.post('/preview', async (req, res) => {
 // Redaction endpoint
 app.post('/redact', async (req, res) => {
     try {
-        const { folder, patterns } = req.body;
+        const { folder, patterns, customText } = req.body;
         
         if (!folder) {
             return res.status(400).json({
@@ -70,7 +71,8 @@ app.post('/redact', async (req, res) => {
         const result = await processHTMLFilesForRedaction(
             folderPath,
             outputFolder,
-            patterns
+            patterns,
+            customText
         );
 
         if (!result.success) {
