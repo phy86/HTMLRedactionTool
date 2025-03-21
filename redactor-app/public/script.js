@@ -250,15 +250,34 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // Initialize folder picker
+    const folderPicker = document.getElementById('folderPicker');
+    const localFolderBtn = document.getElementById('localFolderBtn');
+    const googleDriveBtn = document.getElementById('googleDriveBtn');
+
     // Event Listeners
     console.log('Setting up event listeners');
-    console.log('Preview button:', previewBtn);
     
     previewBtn.addEventListener('click', handlePreview);
-    console.log('Preview button click handler attached');
-    
     redactBtn.addEventListener('click', handleRedact);
-    console.log('Redact button click handler attached');
+
+    // Local folder picker
+    localFolderBtn.addEventListener('click', () => {
+        folderPicker.click();
+    });
+
+    folderPicker.addEventListener('change', (e) => {
+        if (e.target.files.length > 0) {
+            const folder = e.target.files[0];
+            folderPathInput.value = folder.path || folder.webkitRelativePath.split('/')[0];
+        }
+    });
+
+    // Google Drive integration
+    googleDriveBtn.addEventListener('click', async () => {
+        // This would typically integrate with Google Drive API
+        alert('Google Drive integration coming soon!');
+    });
 
     // Form submission prevention
     form.addEventListener('submit', (e) => {
