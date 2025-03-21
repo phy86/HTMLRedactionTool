@@ -26,10 +26,26 @@ app.post('/preview', async (req, res) => {
             });
         }
 
-        const folderPath = path.resolve(process.cwd(), folder);
+        // Ensure the folder path is absolute
+        const folderPath = path.isAbsolute(folder) ? folder : path.resolve(process.cwd(), folder);
+        
+        // Verify it's a directory
+        try {
+            const stats = await require('fs').promises.stat(folderPath);
+            if (!stats.isDirectory()) {
+                return res.status(400).json({
+                    success: false,
+                    error: 'Path must be a directory'
+                });
+            }
+        } catch (error) {
+            return res.status(400).json({
+                success: false,
+                error: 'Directory not found'
+            });
+        }
+
         console.log('Processing folder:', folderPath);
-        console.log('Current working directory:', process.cwd());
-        console.log('Directory exists:', require('fs').existsSync(folderPath));
         console.log('Custom text to redact:', customText);
         
         const result = await processHTMLFilesForPreview(folderPath, patterns, customText);
