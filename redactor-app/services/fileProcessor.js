@@ -64,7 +64,7 @@ async function ensureOutputDir(inputPath, inputRoot, outputRoot) {
  * @param {string|string[]|null} patterns - Optional regex patterns
  * @returns {Promise<Object>} Object mapping file paths to their preview content
  */
-async function processHTMLFilesForPreview(inputFolder, patterns = null) {
+async function processHTMLFilesForPreview(inputFolder, patterns = null, customText = null) {
     const results = {};
     const errors = {};
 
@@ -74,7 +74,7 @@ async function processHTMLFilesForPreview(inputFolder, patterns = null) {
         for (const filePath of htmlFiles) {
             try {
                 const content = await fs.readFile(filePath, 'utf8');
-                const previewContent = previewSensitiveContent(content, patterns);
+                const previewContent = previewSensitiveContent(content, patterns, customText);
                 const relativePath = path.relative(inputFolder, filePath);
                 results[relativePath] = previewContent;
             } catch (error) {
@@ -115,7 +115,7 @@ async function processHTMLFilesForRedaction(inputFolder, outputFolder, patterns 
         for (const filePath of htmlFiles) {
             try {
                 const content = await fs.readFile(filePath, 'utf8');
-                const redactedContent = redactSensitiveContent(content, patterns);
+                const redactedContent = redactSensitiveContent(content, patterns, customText);
                 
                 const outputPath = await ensureOutputDir(filePath, inputFolder, outputFolder);
                 await fs.writeFile(outputPath, redactedContent, 'utf8');
